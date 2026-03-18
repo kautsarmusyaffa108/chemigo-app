@@ -21,7 +21,7 @@ export function TopBar() {
         <div className="bg-primary text-white p-1.5 rounded-lg rotate-3 shadow-sm">
           <Map size={20} className="-rotate-3" />
         </div>
-        KimiaKu
+        Chemigo
       </div>
       
       <div className="flex items-center gap-4 sm:gap-6 font-bold text-lg">

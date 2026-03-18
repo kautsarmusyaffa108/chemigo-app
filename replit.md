@@ -93,13 +93,14 @@ Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHea
 
 ### `artifacts/kimia-app` (`@workspace/kimia-app`)
 
-KimiaKu - Belajar Kimia app (React + Vite). A Duolingo-style chemistry learning app.
+Chemigo - Belajar Kimia app (React + Vite). A Duolingo-style chemistry learning app.
 
 - Pages: Home (lesson path), Lesson (interactive quiz), Periodic Table, Leaderboard
 - Features: hearts system (5 max, lose 1 per wrong answer), XP points, streak counter, progress bar
 - 8 lessons covering: Logam Alkali, Alkali Tanah, Gas Mulia, Halogen, Logam Transisi, Nonlogam, Metaloid, Tabel Periodik
 - Packages: framer-motion (animations), canvas-confetti (celebrations), uuid (session IDs)
 - Uses localStorage-based session ID for progress tracking (no login required)
+- Firebase integrated: Firestore, Auth, Analytics (config via VITE_FIREBASE_* env vars)
 
 ### `scripts` (`@workspace/scripts`)
 
