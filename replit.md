@@ -91,6 +91,16 @@ Generated Zod schemas from the OpenAPI spec (e.g. `HealthCheckResponse`). Used b
 
 Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHealthCheck`, `healthCheck`).
 
+### `artifacts/kimia-app` (`@workspace/kimia-app`)
+
+KimiaKu - Belajar Kimia app (React + Vite). A Duolingo-style chemistry learning app.
+
+- Pages: Home (lesson path), Lesson (interactive quiz), Periodic Table, Leaderboard
+- Features: hearts system (5 max, lose 1 per wrong answer), XP points, streak counter, progress bar
+- 8 lessons covering: Logam Alkali, Alkali Tanah, Gas Mulia, Halogen, Logam Transisi, Nonlogam, Metaloid, Tabel Periodik
+- Packages: framer-motion (animations), canvas-confetti (celebrations), uuid (session IDs)
+- Uses localStorage-based session ID for progress tracking (no login required)
+
 ### `scripts` (`@workspace/scripts`)
 
 Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.

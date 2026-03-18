@@ -1,15 +1,18 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: API for KimiaKu - Belajar Kimia app
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: progress
+    description: User progress operations
+  - name: questions
+    description: Question operations
 paths:
   /healthz:
     get:
@@ -24,6 +27,79 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /progress:
+    get:
+      operationId: getProgress
+      tags: [progress]
+      summary: Get user progress
+      description: Returns the current user progress including hearts, xp and completed lessons
+      responses:
+        "200":
+          description: User progress
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProgress"
+    post:
+      operationId: saveProgress
+      tags: [progress]
+      summary: Save user progress
+      description: Save or update user progress
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveProgressRequest"
+      responses:
+        "200":
+          description: Progress saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProgress"
+  /questions:
+    get:
+      operationId: getQuestions
+      tags: [questions]
+      summary: Get questions for a lesson
+      description: Returns questions for a specific lesson
+      parameters:
+        - name: lessonId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: difficulty
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [easy, medium, hard]
+      responses:
+        "200":
+          description: List of questions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Question"
+  /leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [progress]
+      summary: Get leaderboard
+      description: Returns top users by XP
+      responses:
+        "200":
+          description: Leaderboard entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +109,153 @@ components:
           type: string
       required:
         - status
-
+    UserProgress:
+      type: object
+      properties:
+        id:
+          type: integer
+        sessionId:
+          type: string
+        hearts:
+          type: integer
+          description: Number of remaining hearts (0-5)
+        xp:
+          type: integer
+          description: Total experience points
+        streak:
+          type: integer
+          description: Number of consecutive days
+        completedLessons:
+          type: array
+          items:
+            type: string
+          description: List of completed lesson IDs
+        currentLesson:
+          type: string
+          nullable: true
+        lastHeartRefill:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+        - id
+        - sessionId
+        - hearts
+        - xp
+        - streak
+        - completedLessons
+    SaveProgressRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        hearts:
+          type: integer
+        xp:
+          type: integer
+        streak:
+          type: integer
+        completedLessons:
+          type: array
+          items:
+            type: string
+        currentLesson:
+          type: string
+          nullable: true
+      required:
+        - sessionId
+        - hearts
+        - xp
+        - streak
+        - completedLessons
+    Question:
+      type: object
+      properties:
+        id:
+          type: string
+        lessonId:
+          type: string
+        type:
+          type: string
+          enum: [multiple_choice, symbol_guess, name_guess, fill_blank, match_pairs]
+        question:
+          type: string
+        hint:
+          type: string
+          nullable: true
+        options:
+          type: array
+          items:
+            type: string
+          nullable: true
+        correctAnswer:
+          type: string
+        explanation:
+          type: string
+          nullable: true
+        element:
+          $ref: "#/components/schemas/ElementInfo"
+          nullable: true
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        xpReward:
+          type: integer
+      required:
+        - id
+        - lessonId
+        - type
+        - question
+        - correctAnswer
+        - difficulty
+        - xpReward
+    ElementInfo:
+      type: object
+      properties:
+        atomicNumber:
+          type: integer
+        symbol:
+          type: string
+        name:
+          type: string
+        atomicMass:
+          type: number
+        category:
+          type: string
+        group:
+          type: integer
+          nullable: true
+        period:
+          type: integer
+        electronConfig:
+          type: string
+          nullable: true
+        funFact:
+          type: string
+          nullable: true
+      required:
+        - atomicNumber
+        - symbol
+        - name
+        - atomicMass
+        - category
+        - period
+    LeaderboardEntry:
+      type: object
+      properties:
+        rank:
+          type: integer
+        sessionId:
+          type: string
+        xp:
+          type: integer
+        streak:
+          type: integer
+        completedLessonsCount:
+          type: integer
+      required:
+        - rank
+        - sessionId
+        - xp
+        - streak
+        - completedLessonsCount

@@ -1,0 +1,20 @@
+packages:
+  "framer-motion": "For playful animations, page transitions, and interactive quiz feedback"
+  "canvas-confetti": "For celebration effects when completing a lesson"
+  "@types/canvas-confetti": "Type definitions for canvas-confetti"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility to safely merge Tailwind CSS classes"
+  "uuid": "To generate unique session IDs for tracking progress"
+  "@types/uuid": "Type definitions for uuid"
+
+images:
+  - path: "artifacts/kimia-app/public/images/mascot-happy.png"
+    description: "A cute, playful 3D rendered mascot of a chemistry laboratory Erlenmeyer flask with eyes and a big smile, wearing safety goggles. Vibrant colors, clean background, suitable for a learning app."
+    aspect_ratio: "1:1"
+  - path: "artifacts/kimia-app/public/images/hero-bg.png"
+    description: "A vibrant, playful abstract background pattern featuring subtle transparent chemistry symbols (atoms, molecules, beakers) on a soft light blue and cyan gradient."
+    aspect_ratio: "16:9"
+
+notes:
+  - The API hook generated for GET /api/progress does not include sessionId as a parameter, so custom fetch calls within TanStack Query will be used to append it.
+  - The app relies on localStorage to persist the sessionId.
