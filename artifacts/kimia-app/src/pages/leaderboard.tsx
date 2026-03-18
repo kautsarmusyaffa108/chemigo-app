@@ -1,11 +1,12 @@
 import { AppLayout } from "@/components/layout";
 import { useLeaderboard } from "@/hooks/use-kimia-api";
-import { getSessionId } from "@/lib/session";
-import { Shield, Medal, Trophy, Award } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Shield, Medal, Trophy } from "lucide-react";
 
 export default function LeaderboardPage() {
   const { data: leaderboard, isLoading } = useLeaderboard();
-  const currentSessionId = getSessionId();
+  const { user } = useAuth();
+  const currentSessionId = user?.uid ?? "";
 
   return (
     <AppLayout>
@@ -52,7 +53,7 @@ export default function LeaderboardPage() {
 
                   <div className="flex-1">
                     <h3 className="font-bold text-foreground text-lg">
-                      {isMe ? "Kamu" : `Pelajar ${entry.sessionId.substring(0, 4)}`}
+                      {isMe ? (user?.displayName ?? "Kamu") : entry.sessionId.length < 16 ? entry.sessionId : `Pelajar ${entry.sessionId.substring(0, 4)}`}
                     </h3>
                     <p className="text-xs text-muted-foreground font-semibold">
                       {entry.completedLessonsCount} Pelajaran selesai
