@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
-import { Atom, Flame, Heart, Shield, Zap, BookOpen, Trophy } from "lucide-react";
+import { Atom, Flame, Shield, Zap, BookOpen, Trophy } from "lucide-react";
 
 const features = [
   {
-    icon: Heart,
-    color: "text-destructive bg-destructive/10",
-    title: "Sistem Nyawa",
-    desc: "Jawab dengan hati-hati! Kamu punya 5 nyawa tiap sesi belajar.",
+    icon: Zap,
+    color: "text-amber-500 bg-amber-100",
+    title: "Sistem Energi",
+    desc: "Jawab dengan tepat! Kamu punya 5 energi tiap sesi — jaga baik-baik.",
   },
   {
-    icon: Zap,
+    icon: Shield,
     color: "text-warning bg-warning/10",
-    title: "Kumpulkan XP",
+    title: "Kumpulkan EXP",
     desc: "Selesaikan pelajaran dan raih poin pengalaman untuk naik peringkat.",
   },
   {

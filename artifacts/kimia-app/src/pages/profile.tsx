@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { AppLayout } from "@/components/layout";
 import { useAuth } from "@/contexts/AuthContext";
-import { useProgress } from "@/hooks/use-kimia-api";
+import { useUserProfile } from "@/hooks/use-user-profile";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import {
-  LogOut, Heart, Flame, Shield, BookOpen, Trophy,
+  LogOut, Zap, Flame, Shield, BookOpen,
   ChevronRight, AlertTriangle, User,
 } from "lucide-react";
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
-  const { data: progress } = useProgress();
+  const { profile, refillEnergy } = useUserProfile();
   const [, setLocation] = useLocation();
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -21,10 +21,30 @@ export default function ProfilePage() {
   };
 
   const stats = [
-    { icon: Shield, label: "Total XP", value: progress?.xp ?? 0, color: "text-primary bg-primary/10" },
-    { icon: Flame, label: "Streak", value: `${progress?.streak ?? 0} hari`, color: "text-warning bg-warning/10" },
-    { icon: Heart, label: "Nyawa", value: `${progress?.hearts ?? 5}/5`, color: "text-destructive bg-destructive/10" },
-    { icon: BookOpen, label: "Pelajaran Selesai", value: progress?.completedLessons?.length ?? 0, color: "text-correct bg-correct/10" },
+    {
+      icon: Shield,
+      label: "Total EXP",
+      value: profile?.exp ?? 0,
+      color: "text-primary bg-primary/10",
+    },
+    {
+      icon: Flame,
+      label: "Streak",
+      value: `${profile?.streak ?? 0} hari`,
+      color: "text-warning bg-warning/10",
+    },
+    {
+      icon: Zap,
+      label: "Energi",
+      value: `${profile?.energy ?? 5}/5`,
+      color: "text-amber-500 bg-amber-100",
+    },
+    {
+      icon: BookOpen,
+      label: "Akun",
+      value: user?.email?.split("@")[0] ?? "—",
+      color: "text-correct bg-correct/10",
+    },
   ];
 
   return (
@@ -48,7 +68,9 @@ export default function ProfilePage() {
               <User size={40} className="text-primary" />
             </div>
           )}
-          <h2 className="text-2xl font-bold text-foreground">{user?.displayName ?? "Pelajar Chemigo"}</h2>
+          <h2 className="text-2xl font-bold text-foreground">
+            {profile?.name ?? user?.displayName ?? "Pelajar Chemigo"}
+          </h2>
           <p className="text-muted-foreground text-sm mt-1">{user?.email}</p>
           <div className="mt-3 bg-primary/10 px-4 py-1.5 rounded-full">
             <span className="text-primary font-bold text-sm">Pelajar Kimia 🧪</span>
@@ -63,48 +85,47 @@ export default function ProfilePage() {
           className="grid grid-cols-2 gap-3 mb-6"
         >
           {stats.map((stat) => (
-            <div key={stat.label} className="bg-card border-2 border-border rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
+            <div
+              key={stat.label}
+              className="bg-card border-2 border-border rounded-2xl p-4 flex flex-col gap-2 shadow-sm"
+            >
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${stat.color}`}>
                 <stat.icon size={20} />
               </div>
               <div>
                 <p className="text-xs text-muted-foreground font-semibold">{stat.label}</p>
-                <p className="text-xl font-bold text-foreground">{stat.value}</p>
+                <p className="text-xl font-bold text-foreground truncate">{stat.value}</p>
               </div>
             </div>
           ))}
         </motion.div>
 
-        {/* Achievements Section */}
+        {/* Energy Refill */}
+        {(profile?.energy ?? 5) < 5 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="mb-4"
+          >
+            <button
+              onClick={refillEnergy}
+              className="w-full flex items-center justify-between bg-amber-50 border-2 border-amber-300 text-amber-700 font-bold py-4 px-5 rounded-2xl hover:bg-amber-100 transition-colors shadow-sm"
+            >
+              <div className="flex items-center gap-3">
+                <Zap size={20} className="fill-amber-400 text-amber-500" />
+                Isi Ulang Energi ke Penuh
+              </div>
+              <ChevronRight size={18} className="opacity-60" />
+            </button>
+          </motion.div>
+        )}
+
+        {/* Sign Out */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-card border-2 border-border rounded-2xl p-4 mb-6 shadow-sm"
-        >
-          <h3 className="font-bold text-foreground mb-3 flex items-center gap-2">
-            <Trophy size={18} className="text-yellow-500" />
-            Pelajaran Selesai
-          </h3>
-          {progress?.completedLessons && progress.completedLessons.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {progress.completedLessons.map((id) => (
-                <span key={id} className="bg-correct/10 text-correct border border-correct/20 text-xs font-bold px-3 py-1.5 rounded-full">
-                  ✓ {id.replace("lesson-", "Pelajaran ").replace("l", "Pelajaran ")}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p className="text-muted-foreground text-sm">Belum ada pelajaran yang selesai. Mulai belajar sekarang!</p>
-          )}
-        </motion.div>
-
-        {/* Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="flex flex-col gap-3"
         >
           <button
             onClick={() => setShowConfirm(true)}
@@ -118,7 +139,7 @@ export default function ProfilePage() {
           </button>
         </motion.div>
 
-        {/* Sign Out Confirm Modal */}
+        {/* Confirm modal */}
         {showConfirm && (
           <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center p-4">
             <motion.div
@@ -131,9 +152,11 @@ export default function ProfilePage() {
                   <AlertTriangle size={28} className="text-destructive" />
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-center text-foreground mb-2">Keluar dari Akun?</h3>
+              <h3 className="text-xl font-bold text-center text-foreground mb-2">
+                Keluar dari Akun?
+              </h3>
               <p className="text-muted-foreground text-center text-sm mb-6">
-                Progress belajarmu telah tersimpan. Kamu bisa masuk kembali kapan saja.
+                Progress belajarmu telah tersimpan di Firebase. Kamu bisa masuk kembali kapan saja.
               </p>
               <div className="flex gap-3">
                 <button

@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { useProgress } from "@/hooks/use-kimia-api";
 import { useAuth } from "@/contexts/AuthContext";
-import { Heart, Flame, Shield, Map, Grid, Trophy, User, Atom } from "lucide-react";
+import { useUserProfile } from "@/hooks/use-user-profile";
+import { Zap, Flame, Shield, Map, Grid, Trophy, User, Atom } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -11,14 +11,16 @@ function cn(...inputs: ClassValue[]) {
 }
 
 export function TopBar() {
-  const { data: progress } = useProgress();
   const { user } = useAuth();
-  const hearts = progress?.hearts ?? 5;
-  const xp = progress?.xp ?? 0;
-  const streak = progress?.streak ?? 0;
+  const { profile } = useUserProfile();
+
+  const energy = profile?.energy ?? 5;
+  const exp = profile?.exp ?? 0;
+  const streak = profile?.streak ?? 0;
 
   return (
     <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border px-4 py-3 flex items-center justify-between shadow-sm">
+      {/* Logo */}
       <div className="flex items-center gap-2 text-primary font-bold text-xl">
         <div className="bg-primary text-white p-1.5 rounded-lg rotate-3 shadow-sm">
           <Atom size={20} className="-rotate-3" />
@@ -26,20 +28,30 @@ export function TopBar() {
         Chemigo
       </div>
 
-      <div className="flex items-center gap-3 sm:gap-5 font-bold text-lg">
-        <div className="flex items-center gap-1.5 text-warning">
+      {/* Stats */}
+      <div className="flex items-center gap-3 sm:gap-5 font-bold text-base">
+        {/* Streak */}
+        <div className="flex items-center gap-1 text-warning">
           <Flame size={20} className="fill-warning text-warning" />
-          <span className="text-base">{streak}</span>
+          <span>{streak}</span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-primary">
+        {/* EXP */}
+        <div className="flex items-center gap-1 text-primary">
           <Shield size={20} className="fill-primary text-primary" />
-          <span className="text-base">{xp}</span>
+          <span>{exp}</span>
         </div>
 
-        <div className={cn("flex items-center gap-1.5", hearts === 0 ? "text-muted-foreground" : "text-destructive")}>
-          <Heart size={20} className={hearts > 0 ? "fill-destructive text-destructive" : ""} />
-          <span className="text-base">{hearts}</span>
+        {/* Energy (replaces Hearts) */}
+        <div className={cn(
+          "flex items-center gap-1",
+          energy === 0 ? "text-muted-foreground" : "text-amber-500"
+        )}>
+          <Zap
+            size={20}
+            className={energy > 0 ? "fill-amber-400 text-amber-500" : "text-muted-foreground"}
+          />
+          <span>{energy}</span>
         </div>
 
         {/* Profile Avatar */}
