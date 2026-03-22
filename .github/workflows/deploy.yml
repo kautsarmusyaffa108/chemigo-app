@@ -20,10 +20,10 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22 # Kita naikkan ke versi terbaru
+          node-version: 22
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4 # Update ke v4
+        uses: pnpm/action-setup@v4
         with:
           version: 9
 
@@ -35,25 +35,24 @@ jobs:
           PORT: 3000
           BASE_PATH: /chemigo-app/
           VITE_BASE_PATH: /chemigo-app/
-        run: pnpm --filter @workspace/kimia-app exec vite build --base=/chemigo-app/
+        # Kita paksa build dan langsung cek isinya ada di mana
+        run: |
+          pnpm --filter @workspace/kimia-app exec vite build --base=/chemigo-app/
+          ls -R # Ini buat kita ngintip semua folder kalau gagal lagi
 
       - name: Fix SPA Router
         run: |
-          # Mencari di mana folder dist berada dan menyimpan jalurnya
-          DIST_PATH=$(find . -name dist -type d -not -path "*/node_modules/*" | head -n 1)
-          echo "Folder dist ditemukan di: $DIST_PATH"
-          if [ -n "$DIST_PATH" ]; then
-            cp "$DIST_PATH/index.html" "$DIST_PATH/404.html"
-            # Simpan path ke file lingkungan agar bisa dipakai step berikutnya
-            echo "FINAL_DIST=$DIST_PATH" >> $GITHUB_ENV
-          else
-            echo "Folder dist tetap tidak ditemukan!" && exit 1
-          fi
+          # Cari file index.html di manapun dia berada
+          TARGET_FILE=$(find . -name index.html -not -path "*/node_modules/*" | grep "/dist/" | head -n 1)
+          TARGET_DIR=$(dirname "$TARGET_FILE")
+          echo "Folder build ditemukan di: $TARGET_DIR"
+          cp "$TARGET_FILE" "$TARGET_DIR/404.html"
+          echo "FINAL_PATH=$TARGET_DIR" >> $GITHUB_ENV
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.FINAL_DIST }}
+          path: ${{ env.FINAL_PATH }}
 
   deploy:
     environment:
