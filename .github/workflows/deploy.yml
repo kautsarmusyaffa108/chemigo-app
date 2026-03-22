@@ -38,24 +38,15 @@ jobs:
         run: pnpm --filter @workspace/kimia-app exec vite build --base=/chemigo-app/
 
       - name: Fix SPA Router
-        # Kita arahkan ke folder dist/public sesuai hasil log build kamu
-        run: cp dist/public/index.html dist/public/404.html
+        # Kita pakai folder dist yang ada di root sesuai hasil log build kamu
+        run: cp dist/index.html dist/404.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Sesuaikan path ke folder yang benar
-          path: './dist/public'
+          # Kita ambil langsung dari folder dist
+          path: './dist'
 
-
-
-      - name: Fix SPA Router
-        run: cp artifacts/kimia-app/dist/index.html artifacts/kimia-app/dist/404.html
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './artifacts/kimia-app/dist'
 
   deploy:
     environment:
