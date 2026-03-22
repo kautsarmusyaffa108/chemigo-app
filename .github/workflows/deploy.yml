@@ -31,7 +31,8 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Build project
-        # Menggunakan --filter untuk menjalankan build hanya di folder kimia-app
+        env:
+          PORT: 3000 # Kita kasih PORT palsu di sini
         run: pnpm --filter @workspace/kimia-app exec vite build --base=/chemigo-app/
 
       - name: Fix SPA Router
