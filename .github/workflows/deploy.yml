@@ -2,17 +2,13 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["master"] # Sesuai dengan branch di screenshot kamu
+    branches: ["master"]
   workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
   build:
@@ -32,18 +28,17 @@ jobs:
           version: 9
 
       - name: Install dependencies
-        run: pnpm install
+        # Kita tambahin --no-frozen-lockfile buat antisipasi error lockfile dari Replit
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build project
-        # Tambahan --base supaya file CSS & JS nggak error 404
-        run: pnpm --filter @workspace/kimia-app exec vite build --base=/chemigo-app/
+        # Langsung tembak ke folder aplikasi kamu
+        run: |
+          cd artifacts/kimia-app
+          ../../node_modules/.bin/vite build --base=/chemigo-app/
 
-      - name: Fix SPA Router (Wouter)
-        # Biar kalau di-refresh halamannya nggak blank/404
+      - name: Fix SPA Router
         run: cp artifacts/kimia-app/dist/index.html artifacts/kimia-app/dist/404.html
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
