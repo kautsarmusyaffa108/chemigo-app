@@ -52,7 +52,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist' # Pastikan titik slash-nya begini
+          path: ${{ env.FINAL_PATH }}
 
 
   deploy:
