@@ -32,8 +32,11 @@ jobs:
 
       - name: Build project
         env:
-          PORT: 3000 # Kita kasih PORT palsu di sini
+          PORT: 3000
+          BASE_PATH: /chemigo-app/
+          VITE_BASE_PATH: /chemigo-app/
         run: pnpm --filter @workspace/kimia-app exec vite build --base=/chemigo-app/
+
 
       - name: Fix SPA Router
         run: cp artifacts/kimia-app/dist/index.html artifacts/kimia-app/dist/404.html
