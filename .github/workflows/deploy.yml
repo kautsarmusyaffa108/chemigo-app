@@ -38,8 +38,12 @@ jobs:
         run: pnpm --filter @workspace/kimia-app exec vite build --base=/chemigo-app/
 
       - name: Fix SPA Router
-        # Kita pakai folder dist yang ada di root sesuai hasil log build kamu
-        run: cp dist/index.html dist/404.html
+        run: |
+          # Pastikan folder dist ada dan beri izin akses penuh
+          sudo mkdir -p dist
+          sudo chmod -R 777 dist
+          # Salin file dengan hak akses root
+          sudo cp dist/index.html dist/404.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
