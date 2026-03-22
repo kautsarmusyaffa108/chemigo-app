@@ -39,18 +39,21 @@ jobs:
 
       - name: Fix SPA Router
         run: |
-          # Pastikan folder dist ada dan beri izin akses penuh
-          sudo mkdir -p dist
-          sudo chmod -R 777 dist
-          # Salin file dengan hak akses root
-          sudo cp dist/index.html dist/404.html
+          # Mencari di mana folder dist berada dan menyimpan jalurnya
+          DIST_PATH=$(find . -name dist -type d -not -path "*/node_modules/*" | head -n 1)
+          echo "Folder dist ditemukan di: $DIST_PATH"
+          if [ -n "$DIST_PATH" ]; then
+            cp "$DIST_PATH/index.html" "$DIST_PATH/404.html"
+            # Simpan path ke file lingkungan agar bisa dipakai step berikutnya
+            echo "FINAL_DIST=$DIST_PATH" >> $GITHUB_ENV
+          else
+            echo "Folder dist tetap tidak ditemukan!" && exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Kita ambil langsung dari folder dist
-          path: './dist'
-
+          path: ${{ env.FINAL_DIST }}
 
   deploy:
     environment:
