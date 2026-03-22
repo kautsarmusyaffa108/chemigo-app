@@ -20,22 +20,19 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22 # Kita naikkan ke versi terbaru
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4 # Update ke v4
         with:
           version: 9
 
       - name: Install dependencies
-        # Kita tambahin --no-frozen-lockfile buat antisipasi error lockfile dari Replit
         run: pnpm install --no-frozen-lockfile
 
       - name: Build project
-        # Langsung tembak ke folder aplikasi kamu
-        run: |
-          cd artifacts/kimia-app
-          ../../node_modules/.bin/vite build --base=/chemigo-app/
+        # Menggunakan --filter untuk menjalankan build hanya di folder kimia-app
+        run: pnpm --filter @workspace/kimia-app exec vite build --base=/chemigo-app/
 
       - name: Fix SPA Router
         run: cp artifacts/kimia-app/dist/index.html artifacts/kimia-app/dist/404.html
